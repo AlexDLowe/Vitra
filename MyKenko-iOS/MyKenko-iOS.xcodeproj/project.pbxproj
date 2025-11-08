@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		8C3B17F52EBCC7D20094DA04 /* MyKenkoCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8C3B17F42EBCC7D20094DA04 /* MyKenkoCore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		8C3B174A2EBCBB1E0094DA04 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C3B17F52EBCC7D20094DA04 /* MyKenkoCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 				8C3B173C2EBCBB1C0094DA04 /* MyKenko-iOS */,
 				8C3B174C2EBCBB1E0094DA04 /* MyKenko-iOSTests */,
 				8C3B17562EBCBB1E0094DA04 /* MyKenko-iOSUITests */,
+				8C3B17F02EBCC6670094DA04 /* Frameworks */,
 				8C3B173B2EBCBB1C0094DA04 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +96,13 @@
 				8C3B17532EBCBB1E0094DA04 /* MyKenko-iOSUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8C3B17F02EBCC6670094DA04 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +125,7 @@
 			);
 			name = "MyKenko-iOS";
 			packageProductDependencies = (
+				8C3B17F42EBCC7D20094DA04 /* MyKenkoCore */,
 			);
 			productName = "MyKenko-iOS";
 			productReference = 8C3B173A2EBCBB1C0094DA04 /* MyKenko-iOS.app */;
@@ -195,6 +209,9 @@
 			);
 			mainGroup = 8C3B17312EBCBB1C0094DA04;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				8C3B17F32EBCC7640094DA04 /* XCLocalSwiftPackageReference "../MyKenkoCore" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8C3B173B2EBCBB1C0094DA04 /* Products */;
 			projectDirPath = "";
@@ -395,6 +412,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "MyKenko-iOS/MyKenko-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WCWZK6T4VF;
@@ -410,7 +428,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "MyKenko.MyKenko-iOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "AlexDonovanLowe.MyKenko.MyKenko-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -427,6 +445,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "MyKenko-iOS/MyKenko-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WCWZK6T4VF;
@@ -442,7 +461,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "MyKenko.MyKenko-iOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "AlexDonovanLowe.MyKenko.MyKenko-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -578,6 +597,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		8C3B17F32EBCC7640094DA04 /* XCLocalSwiftPackageReference "../MyKenkoCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../MyKenkoCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8C3B17F42EBCC7D20094DA04 /* MyKenkoCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MyKenkoCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8C3B17322EBCBB1C0094DA04 /* Project object */;
 }

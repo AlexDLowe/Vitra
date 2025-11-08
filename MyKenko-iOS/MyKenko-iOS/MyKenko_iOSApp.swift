@@ -6,27 +6,26 @@
 //
 
 import SwiftUI
-import SwiftData
+import CoreData
+import MyKenkoCore
 
 @main
 struct MyKenko_iOSApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+    @StateObject private var box: StoreBox
 
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
+    init() {
+        // Use the explicit iCloud container identifier configured for this app
+        let cloudKitID = "iCloud.com.AlexDonovanLowe.MyKenko"
+
+        // Create a CoreData-backed store configured for CloudKit.
+        let coreStore = CoreDataStore(cloudKitContainerIdentifier: cloudKitID)
+        _box = StateObject(wrappedValue: StoreBox(store: coreStore))
+    }
 
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+            WindowGroup {
+                ContentView()
+                    .environmentObject(box)
         }
-        .modelContainer(sharedModelContainer)
     }
 }
