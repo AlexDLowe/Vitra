@@ -12,6 +12,7 @@ import MyKenkoCore
 @main
 struct MyKenko_iOSApp: App {
     @StateObject private var box: StoreBox
+    @StateObject private var session = SessionManager()
 
     init() {
         // Use the explicit iCloud container identifier configured for this app
@@ -26,6 +27,7 @@ struct MyKenko_iOSApp: App {
             WindowGroup {
                 ContentView()
                     .environmentObject(box)
+                    .environmentObject(session)
         }
     }
 }

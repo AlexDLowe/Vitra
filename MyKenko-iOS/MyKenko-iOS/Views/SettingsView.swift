@@ -5,33 +5,43 @@
 //  Created by Alex Donovan-Lowe on 10/11/2025.
 //
 
+import Combine
 import SwiftUI
 import AuthenticationServices
-
-struct AppleSignInUser {
-    let displayName: String
-    let email: String?
-    let identifier: String
-}
+import MyKenkoCore
 
 struct SettingsView: View {
-    @State private var signedInUser: AppleSignInUser?
+    @EnvironmentObject private var box: StoreBox
+    @EnvironmentObject private var session: SessionManager
     @State private var signInError: String?
     @State private var isProcessingSignIn: Bool = false
+    @State private var showGoalEditor = false
 
     var body: some View {
         NavigationStack {
             List {
                 accountSection
+                goalSection
                 aboutSection
             }
             .navigationTitle("Settings")
+            .sheet(isPresented: $showGoalEditor) {
+                DailyGoalEditorView(
+                    title: "Daily Calorie Goal",
+                    message: "Update the number of calories you want to consume each day.",
+                    initialValue: box.store.dailyGoal.calories
+                ) { newGoal in
+                    box.store.dailyGoal = DailyGoal(calories: newGoal)
+                    box.objectWillChange.send()
+                    session.markGoalOnboardingComplete()
+                }
+            }
         }
     }
 
     private var accountSection: some View {
         Section("Account") {
-            if let user = signedInUser {
+            if let user = session.signedInUser {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(user.displayName)
                         .font(.headline)
@@ -48,7 +58,7 @@ struct SettingsView: View {
 
                 Button(role: .destructive) {
                     withAnimation {
-                        signedInUser = nil
+                        session.updateUser(nil)
                         signInError = nil
                     }
                 } label: {
@@ -81,6 +91,22 @@ struct SettingsView: View {
         }
     }
 
+    private var goalSection: some View {
+        Section("Nutrition") {
+            Button {
+                showGoalEditor = true
+            } label: {
+                HStack {
+                    Text("Daily Calorie Goal")
+                    Spacer()
+                    Text("\(box.store.dailyGoal.calories) kcal")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .disabled(!session.isSignedIn)
+        }
+    }
+
     private var aboutSection: some View {
         Section("About") {
             VStack(alignment: .leading, spacing: 4) {
@@ -98,7 +124,7 @@ struct SettingsView: View {
     }
 
     private func configureAppleIDRequest(_ request: ASAuthorizationAppleIDRequest) {
-        request.requestedScopes = [.fullName, .email]
+        AppleSignInCoordinator.configureScopes(for: request)
         isProcessingSignIn = true
         signInError = nil
     }
@@ -114,18 +140,8 @@ struct SettingsView: View {
                     return
                 }
 
-                let nameComponents = credential.fullName
-                let formatter = PersonNameComponentsFormatter()
-                formatter.style = .default
-                let fullName = nameComponents.flatMap { formatter.string(from: $0) }?.trimmingCharacters(in: .whitespacesAndNewlines)
-
-                let displayName = [fullName, credential.email].compactMap { $0 }.first ?? "Signed in"
-
-                signedInUser = AppleSignInUser(
-                    displayName: displayName,
-                    email: credential.email,
-                    identifier: credential.user
-                )
+                let user = AppleSignInCoordinator.user(from: credential)
+                session.updateUser(user)
                 signInError = nil
 
             case .failure(let error):
@@ -137,4 +153,6 @@ struct SettingsView: View {
 
 #Preview {
     SettingsView()
+        .environmentObject(StoreBox(store: InMemoryStore()))
+        .environmentObject(SessionManager())
 }
