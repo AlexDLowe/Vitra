@@ -3,7 +3,7 @@
 //  MyKenko-iOS
 //
 //  Created by Alex Donovan-Lowe on 06/11/2025.
-//
+//  Last edited on 10/11/2025.
 
 import Combine
 import SwiftUI
@@ -11,98 +11,79 @@ import MyKenkoCore
 
 struct RecipesHubView: View {
     @EnvironmentObject private var box: StoreBox
+    @EnvironmentObject private var session: SessionManager
     @State private var showingAdd = false
-    @State private var draft = Recipe(title: "", body: "", caloriesPerServing: nil)
+    private var recipes: [Recipe] {
+        guard let userID = session.signedInUser?.identifier else { return [] }
+        return box.store.recipes.filter { $0.ownerIdentifier == userID }
+    }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                GlassCard {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Recipes").font(.title3).bold()
-                        ForEach(box.store.recipes) { r in
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(r.title).font(.headline)
-                                    if let c = r.caloriesPerServing {
-                                        Text("\(c) kcal/serving").foregroundStyle(.secondary)
-                                    }
-                                }
-                                Spacer()
-                                Button("Add to Day") {
-                                    let kcal = r.caloriesPerServing ?? 0
-                                    box.store.add(.init(title: r.title, calories: kcal, source: .recipe))
-                                    box.objectWillChange.send()
-                                }
-                                .buttonStyle(.bordered)
-                            }
-                            Divider()
-                        }
-                        HStack {
-                            Button("Your Recipes") {}
-                            Spacer()
-                            Button("Edit / Change") {}
-                        }
-                        .buttonStyle(.bordered)
-                    }
-                }
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 16) {
+                    GlassCard {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Your Recipes")
+                                .font(.title3.bold())
 
+                            if recipes.isEmpty {
+                                ContentUnavailableView(
+                                    "No recipes yet",
+                                    systemImage: "book",
+                                    description: Text("Create a recipe to make it easy to log later.")
+                                )
+                                .frame(maxWidth: .infinity)
+                            } else {
+                                ForEach(recipes) { recipe in
+                                    HStack(alignment: .center, spacing: 12) {
+                                        NavigationLink(destination: RecipeDetailView(recipeID: recipe.id)) {
+                                            HStack {
+                                                VStack(alignment: .leading, spacing: 4) {
+                                                    Text(recipe.title)
+                                                        .font(.headline)
+                                                    if let calories = recipe.caloriesPerServing {
+                                                        Text("\(calories) kcal/serving")
+                                                            .font(.subheadline)
+                                                            .foregroundStyle(.secondary)
+                                                    }
+                                                }
+                                                Spacer()
+                                                Image(systemName: "chevron.right")
+                                                    .foregroundStyle(.tertiary)
+                                            }
+                                            .contentShape(Rectangle())
+                                        }
+                                        .buttonStyle(.plain)
+
+                                        Button("Add to Day") {
+                                            let kcal = recipe.caloriesPerServing ?? 0
+                                            box.store.add(.init(title: recipe.title, calories: kcal, source: .recipe))
+                                            box.objectWillChange.send()
+                                        }
+                                        .buttonStyle(.bordered)
+                                    }
+                                    Divider()
+                                }
+                            }
+                        }
+                    }
                 GlassCard {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Add a Recipe").font(.headline)
                         Button("Create New") { showingAdd = true }
                             .buttonStyle(.borderedProminent)
+                        }
                     }
                 }
+                        .padding()
             }
-            .padding()
+                    .navigationTitle("Recipes")
         }
         .sheet(isPresented: $showingAdd) {
-            AddRecipeSheet(draft: $draft)
-                .environmentObject(box)
-        }
-    }
-}
-
-private struct AddRecipeSheet: View {
-    @EnvironmentObject private var box: StoreBox
-    @Environment(\.dismiss) private var dismiss
-    @Binding var draft: Recipe
-    @State private var title = ""
-    @State private var tags: [Recipe.Tag] = []
-    @State private var kcal = ""
-    @State private var ingredients = ""
-    
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Details") {
-                    
-                    TextField("Title", text: $title)
-                    TextField("Calories per serving (optional)", text: $kcal)
-                        .keyboardType(.numberPad)
-                    TextField("Ingredients (free text)", text: $ingredients, axis: .vertical)
-                        .lineLimit(4...8)
-                }
-                Section("Tags") {
-                    TagSelectorView(selectedTags: $tags)
-                }
-            }
-            .navigationTitle("Add Recipe")
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        let c = Int(kcal)
-                        let recipe = Recipe(title: title, tags: tags, body: ingredients, caloriesPerServing: c)
-                        box.store.add(recipe)
-                        box.objectWillChange.send()
-                        dismiss()
-                    }
-                }
-
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
+            RecipeEditorView(mode: .create, ownerIdentifier: session.signedInUser?.identifier) { recipe in
+                box.store.add(recipe)
+                box.objectWillChange.send()
             }
         }
     }

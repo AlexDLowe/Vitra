@@ -11,10 +11,17 @@ import MyKenkoCore
 
 struct AddIntakeView: View {
     @EnvironmentObject private var box: StoreBox
+    @EnvironmentObject private var session: SessionManager
     @State private var selection = 0
     @State private var itemTitle = ""
     @State private var itemKcal = ""
     @State private var selectedRecipe: Recipe?
+    
+    private var recipes: [Recipe] {
+        guard let userID = session.signedInUser?.identifier else { return [] }
+        return box.store.recipes.filter { $0.ownerIdentifier == userID }
+    }
+
 
     var body: some View {
         VStack(spacing: 16) {
@@ -23,7 +30,11 @@ struct AddIntakeView: View {
                 Text("From Recipe").tag(1)
             }
             .pickerStyle(.segmented)
-
+            .onChange(of: selection) { newValue in
+                if newValue == 1, selectedRecipe == nil {
+                    selectedRecipe = recipes.first
+                }
+            }
             if selection == 0 {
                 GlassCard {
                     VStack(spacing: 12) {
@@ -45,10 +56,12 @@ struct AddIntakeView: View {
                 GlassCard {
                     VStack(spacing: 12) {
                         Picker("Recipe", selection: $selectedRecipe) {
-                            ForEach(box.store.recipes) { r in
+                            ForEach(recipes) { r in
                                 Text(r.title).tag(Optional(r))
                             }
                         }
+                        .disabled(recipes.isEmpty)
+                        
                         Button("Add to Day") {
                             guard let r = selectedRecipe else { return }
                             let kcal = r.caloriesPerServing ?? 0
@@ -57,6 +70,7 @@ struct AddIntakeView: View {
                             selectedRecipe = nil
                         }
                         .buttonStyle(.borderedProminent)
+                        .disabled(selectedRecipe == nil)
                     }
                 }
             }
@@ -64,5 +78,19 @@ struct AddIntakeView: View {
         }
         .padding()
         .navigationTitle("Add Intake")
+        .onAppear {
+            if selectedRecipe == nil {
+                selectedRecipe = recipes.first
+            }
+        }
+        .onChange(of: recipes) { newRecipes in
+            guard let selectedRecipe else {
+                self.selectedRecipe = newRecipes.first
+                return
+            }
+            if !newRecipes.contains(selectedRecipe) {
+                self.selectedRecipe = newRecipes.first
+            }
+        }
     }
 }

@@ -51,19 +51,22 @@ public struct Recipe: Identifiable, Codable, Equatable, Sendable, Hashable {
     public var body: String
     public var caloriesPerServing: Int?
     public var ingredients: [Ingredient]
+    public var ownerIdentifier: String?
 
     public init(id: UUID = .init(),
                 title: String,
                 tags: [Tag] = [],
                 body: String,
                 caloriesPerServing: Int? = nil,
-                ingredients: [Ingredient] = []) {
+                ingredients: [Ingredient] = [],
+                ownerIdentifier: String? = nil) {
         self.id = id
         self.title = title
         self.tags = tags
         self.body = body
         self.caloriesPerServing = caloriesPerServing
         self.ingredients = ingredients
+        self.ownerIdentifier = ownerIdentifier
     }
 }
 

@@ -264,7 +264,12 @@ public final class CoreDataStore: DataStore {
             if let rows = try? context.fetch(req), let rmo = rows.first {
                 rmo.setValue(recipe.title, forKey: "title")
                 rmo.setValue(recipe.body, forKey: "body")
-                if let cps = recipe.caloriesPerServing { rmo.setValue(NSNumber(value: cps), forKey: "caloriesPerServing") } else { rmo.setValue(nil, forKey: "caloriesPerServing") }
+                if let cps = recipe.caloriesPerServing {
+                        rmo.setValue(NSNumber(value: cps), forKey: "caloriesPerServing")
+                    } else {
+                        rmo.setValue(nil, forKey: "caloriesPerServing")
+                    }
+                    rmo.setValue(recipe.ownerIdentifier, forKey: "ownerIdentifier")
                 if let existing = rmo.value(forKey: "ingredients") as? NSSet {
                     for case let im as NSManagedObject in existing { context.delete(im) }
                 }
