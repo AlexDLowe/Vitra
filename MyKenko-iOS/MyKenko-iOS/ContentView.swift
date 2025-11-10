@@ -17,6 +17,8 @@ struct ContentView: View {
                 .tabItem { Label("Recipes", systemImage: "book.pages.fill") }
             AddIntakeView()
                 .tabItem { Label("Add", systemImage: "plus.app.fill") }
+            SettingsView()
+                .tabItem { Label("Settings", systemImage: "gearshape.fill") }
         }
     }
 }
