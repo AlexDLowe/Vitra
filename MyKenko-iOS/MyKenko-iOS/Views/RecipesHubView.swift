@@ -69,29 +69,37 @@ private struct AddRecipeSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var draft: Recipe
     @State private var title = ""
-    @State private var instructions = ""
+    @State private var tags: [Recipe.Tag] = []
     @State private var kcal = ""
-
+    @State private var ingredients = ""
+    
     var body: some View {
         NavigationStack {
             Form {
-                TextField("Title", text: $title)
-                TextField("Calories per serving (optional)", text: $kcal)
-                    .keyboardType(.numberPad)
-                TextField("Ingredients (free text)", text: $instructions, axis: .vertical)
-                    .lineLimit(4...8)
+                Section("Details") {
+                    
+                    TextField("Title", text: $title)
+                    TextField("Calories per serving (optional)", text: $kcal)
+                        .keyboardType(.numberPad)
+                    TextField("Ingredients (free text)", text: $ingredients, axis: .vertical)
+                        .lineLimit(4...8)
+                }
+                Section("Tags") {
+                    TagSelectorView(selectedTags: $tags)
+                }
             }
             .navigationTitle("Add Recipe")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         let c = Int(kcal)
-                        let recipe = Recipe(title: title, body: instructions, caloriesPerServing: c)
+                        let recipe = Recipe(title: title, tags: tags, body: ingredients, caloriesPerServing: c)
                         box.store.add(recipe)
                         box.objectWillChange.send()
                         dismiss()
                     }
                 }
+
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
