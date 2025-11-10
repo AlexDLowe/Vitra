@@ -93,10 +93,12 @@ public final class CoreDataStore: DataStore {
         recipeTitle.defaultValue = ""
         var recipeBody = CoreDataStore.attribute(name: "body", type: .stringAttributeType, optional: false)
         recipeBody.defaultValue = ""
+        let recipeOwner = CoreDataStore.attribute(name: "ownerIdentifier", type: .stringAttributeType, optional: true)
         recipe.properties = [
             recipeID,
             recipeTitle,
             recipeBody,
+            recipeOwner,
             CoreDataStore.attribute(name: "caloriesPerServing", type: .integer64AttributeType, optional: true),
             recipeIngredients
         ]
@@ -165,6 +167,7 @@ public final class CoreDataStore: DataStore {
         let title = (mo.value(forKey: "title") as? String) ?? ""
         let body = (mo.value(forKey: "body") as? String) ?? ""
         let caloriesPerServing = (mo.value(forKey: "caloriesPerServing") as? NSNumber)?.intValue
+        let ownerIdentifier = mo.value(forKey: "ownerIdentifier") as? String
         var ingredients: [Ingredient] = []
         if let set = mo.value(forKey: "ingredients") as? NSSet {
             for case let im as NSManagedObject in set {
@@ -174,7 +177,12 @@ public final class CoreDataStore: DataStore {
                 ingredients.append(Ingredient(id: iid, name: name, quantity: qty))
             }
         }
-        return Recipe(id: id, title: title, body: body, caloriesPerServing: caloriesPerServing, ingredients: ingredients)
+        return Recipe(id: id,
+                      title: title,
+                      body: body,
+                      caloriesPerServing: caloriesPerServing,
+                      ingredients: ingredients,
+                      ownerIdentifier: ownerIdentifier)
     }
 
     // MARK: - DataStore conformance
@@ -241,6 +249,7 @@ public final class CoreDataStore: DataStore {
             rmo.setValue(recipe.id, forKey: "id")
             rmo.setValue(recipe.title, forKey: "title")
             rmo.setValue(recipe.body, forKey: "body")
+            rmo.setValue(recipe.ownerIdentifier, forKey: "ownerIdentifier")
             if let cps = recipe.caloriesPerServing { rmo.setValue(NSNumber(value: cps), forKey: "caloriesPerServing") }
 
             var set: [NSManagedObject] = []

@@ -38,7 +38,7 @@ struct RecipeEditorView: View {
 
     @State private var title: String
     @State private var caloriesPerServing: String
-    @State private var body: String
+    @State private var recipeBody: String
 
     init(mode: Mode, recipe: Recipe? = nil, ownerIdentifier: String?, onSave: @escaping (Recipe) -> Void) {
         self.mode = mode
@@ -52,7 +52,7 @@ struct RecipeEditorView: View {
         } else {
             _caloriesPerServing = State(initialValue: "")
         }
-        _body = State(initialValue: recipe?.body ?? "")
+        _recipeBody = State(initialValue: recipe?.body ?? "")
     }
 
     var body: some View {
@@ -65,7 +65,7 @@ struct RecipeEditorView: View {
                 }
 
                 Section("Ingredients / Steps") {
-                    TextField("Notes", text: $body, axis: .vertical)
+                    TextField("Notes", text: $recipeBody, axis: .vertical)
                         .lineLimit(4...10)
                 }
             }
@@ -92,13 +92,14 @@ struct RecipeEditorView: View {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTitle.isEmpty else { return }
 
+        let trimmedBody = recipeBody.trimmingCharacters(in: .whitespacesAndNewlines)
         let caloriesValue = Int(caloriesPerServing)
         var recipe = originalRecipe ?? Recipe(title: trimmedTitle,
-                                              body: body,
+                                              body: recipeBody,
                                               caloriesPerServing: caloriesValue,
                                               ownerIdentifier: ownerIdentifier)
         recipe.title = trimmedTitle
-        recipe.body = body
+        recipe.body = trimmedBody
         recipe.caloriesPerServing = caloriesValue
         if recipe.ownerIdentifier == nil {
             recipe.ownerIdentifier = ownerIdentifier
