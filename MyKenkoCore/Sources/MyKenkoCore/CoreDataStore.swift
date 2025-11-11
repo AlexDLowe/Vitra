@@ -392,3 +392,6 @@ public final class CoreDataStore: DataStore {
         }
     }
 }
+
+@available(iOS 17.0, macOS 10.15, watchOS 6.0, *)
+extension CoreDataStore: @unchecked Sendable {}

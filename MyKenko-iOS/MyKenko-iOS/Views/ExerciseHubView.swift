@@ -5,6 +5,7 @@
 //  Created by OpenAI Assistant on 05/06/2024.
 //
 
+import Combine
 import SwiftUI
 import MyKenkoCore
 
