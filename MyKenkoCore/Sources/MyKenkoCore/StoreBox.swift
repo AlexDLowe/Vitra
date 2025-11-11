@@ -32,4 +32,34 @@ public extension StoreBox {
         objectWillChange.send()
         store.add(r)
     }
+    
+    func addExercise(_ e: Exercise) {
+        objectWillChange.send()
+        store.add(e)
+    }
+
+    func updateExercise(_ e: Exercise) {
+        objectWillChange.send()
+        store.update(e)
+    }
+
+    func removeExercise(id: UUID) {
+        objectWillChange.send()
+        store.remove(exerciseID: id)
+    }
+
+    func addRoutine(_ r: Routine) {
+        objectWillChange.send()
+        store.add(r)
+    }
+
+    func updateRoutine(_ r: Routine) {
+        objectWillChange.send()
+        store.update(r)
+    }
+
+    func removeRoutine(id: UUID) {
+        objectWillChange.send()
+        store.remove(routineID: id)
+    }
 }

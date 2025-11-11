@@ -64,8 +64,8 @@ private struct MainTabView: View {
                 .tabItem { Label("Home", systemImage: "house.fill") }
             RecipesHubView()
                 .tabItem { Label("Recipes", systemImage: "book.pages.fill") }
-            AddIntakeView()
-                .tabItem { Label("Add", systemImage: "plus.app.fill") }
+            ExerciseHubView()
+                .tabItem { Label("Exercise", systemImage: "figure.strengthtraining.traditional") }
             SettingsView()
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
         }

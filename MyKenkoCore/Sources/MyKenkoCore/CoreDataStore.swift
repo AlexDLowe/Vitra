@@ -4,10 +4,12 @@
 import Foundation
 import CoreData
 
-@available(iOS 13.0, macOS 10.15, watchOS 6.0, *)
+@available(iOS 17.0, macOS 10.15, watchOS 6.0, *)
 public final class CoreDataStore: DataStore {
     private let container: NSPersistentContainer
     private var context: NSManagedObjectContext { container.viewContext }
+    private var cachedExercises: [Exercise] = []
+    private var cachedRoutines: [Routine] = []
 
     public init(container: NSPersistentContainer) {
         self.container = container
@@ -27,7 +29,7 @@ public final class CoreDataStore: DataStore {
         // additional model constraints) isn't triggered unintentionally.
         let container: NSPersistentContainer
         if let id = cloudKitContainerIdentifier {
-            if #available(iOS 13.0, macOS 10.15, watchOS 6.0, *) {
+            if #available(iOS 17.0, macOS 10.15, watchOS 6.0, *) {
                 let ck = NSPersistentCloudKitContainer(name: name, managedObjectModel: model)
                 for desc in ck.persistentStoreDescriptions {
                     desc.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: id)
@@ -307,7 +309,59 @@ public final class CoreDataStore: DataStore {
             }
         }
     }
+    
+    public var exercises: [Exercise] {
+        var result: [Exercise] = []
+        context.performAndWait { result = cachedExercises }
+        return result
+    }
 
+    public func add(_ exercise: Exercise) {
+        context.performAndWait {
+            cachedExercises.append(exercise)
+        }
+    }
+
+    public func update(_ exercise: Exercise) {
+        context.performAndWait {
+            if let idx = cachedExercises.firstIndex(where: { $0.id == exercise.id }) {
+                cachedExercises[idx] = exercise
+            }
+        }
+    }
+
+    public func remove(exerciseID: UUID) {
+        context.performAndWait {
+            cachedExercises.removeAll { $0.id == exerciseID }
+        }
+    }
+
+    public var routines: [Routine] {
+        var result: [Routine] = []
+        context.performAndWait { result = cachedRoutines }
+        return result
+    }
+
+    public func add(_ routine: Routine) {
+        context.performAndWait {
+            cachedRoutines.append(routine)
+        }
+    }
+
+    public func update(_ routine: Routine) {
+        context.performAndWait {
+            if let idx = cachedRoutines.firstIndex(where: { $0.id == routine.id }) {
+                cachedRoutines[idx] = routine
+            }
+        }
+    }
+
+    public func remove(routineID: UUID) {
+        context.performAndWait {
+            cachedRoutines.removeAll { $0.id == routineID }
+        }
+    }
+    
     public var dailyGoal: DailyGoal {
         get {
             var g = DailyGoal(calories: 2200)

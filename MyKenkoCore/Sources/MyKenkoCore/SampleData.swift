@@ -22,6 +22,13 @@ public enum SampleData {
                         Ingredient(name: "Romaine", quantity: "1 cup")
                        ])
             ],
+            exercises: [
+                Exercise(name: "Push Ups", numberOfSets: 3, repetitionsPerSet: 12, instructions: "Keep a flat back."),
+                Exercise(name: "Air Squats", numberOfSets: 4, repetitionsPerSet: 15)
+            ],
+            routines: [
+                Routine(name: "Full Body Blast")
+            ],
             dailyGoal: DailyGoal(calories: 2200)
         )
         // a couple of today entries

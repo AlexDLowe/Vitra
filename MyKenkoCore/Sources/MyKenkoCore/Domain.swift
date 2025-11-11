@@ -70,6 +70,47 @@ public struct Recipe: Identifiable, Codable, Equatable, Sendable, Hashable {
     }
 }
 
+public struct Exercise: Identifiable, Codable, Equatable, Sendable, Hashable {
+    public let id: UUID
+    public var name: String
+    public var numberOfSets: Int
+    public var repetitionsPerSet: Int
+    public var instructions: String?
+    public var ownerIdentifier: String?
+
+    public init(id: UUID = .init(),
+                name: String,
+                numberOfSets: Int,
+                repetitionsPerSet: Int,
+                instructions: String? = nil,
+                ownerIdentifier: String? = nil) {
+        self.id = id
+        self.name = name
+        self.numberOfSets = numberOfSets
+        self.repetitionsPerSet = repetitionsPerSet
+        self.instructions = instructions
+        self.ownerIdentifier = ownerIdentifier
+    }
+}
+
+public struct Routine: Identifiable, Codable, Equatable, Sendable, Hashable {
+    public let id: UUID
+    public var name: String
+    public var exerciseIDs: [UUID]
+    public var ownerIdentifier: String?
+
+    public init(id: UUID = .init(),
+                name: String,
+                exerciseIDs: [UUID] = [],
+                ownerIdentifier: String? = nil) {
+        self.id = id
+        self.name = name
+        self.exerciseIDs = exerciseIDs
+        self.ownerIdentifier = ownerIdentifier
+    }
+}
+
+
 public struct DailyGoal: Codable, Equatable, Sendable {
     public var calories: Int
     public init(calories: Int) { self.calories = calories }

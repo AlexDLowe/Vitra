@@ -18,7 +18,19 @@ public protocol DataStore: Sendable {
     mutating func add(_ recipe: Recipe)
     mutating func update(_ recipe: Recipe)
     mutating func remove(recipeID: UUID)
+    
+    // Exercises
+    var exercises: [Exercise] { get }
+    mutating func add(_ exercise: Exercise)
+    mutating func update(_ exercise: Exercise)
+    mutating func remove(exerciseID: UUID)
 
+    // Routines
+    var routines: [Routine] { get }
+    mutating func add(_ routine: Routine)
+    mutating func update(_ routine: Routine)
+    mutating func remove(routineID: UUID)
+    
     // Goals
     var dailyGoal: DailyGoal { get set }
 }
@@ -26,13 +38,19 @@ public protocol DataStore: Sendable {
 public struct InMemoryStore: DataStore {
     private(set) public var allEntries: [CalorieEntry]
     private(set) public var recipes: [Recipe]
+    private(set) public var exercises: [Exercise]
+    private(set) public var routines: [Routine]
     public var dailyGoal: DailyGoal
 
     public init(allEntries: [CalorieEntry] = [],
                 recipes: [Recipe] = [],
+                exercises: [Exercise] = [],
+                routines: [Routine] = [],
                 dailyGoal: DailyGoal = .init(calories: 2200)) {
         self.allEntries = allEntries
         self.recipes = recipes
+        self.exercises = exercises
+        self.routines = routines
         self.dailyGoal = dailyGoal
     }
 
@@ -53,6 +71,22 @@ public struct InMemoryStore: DataStore {
         }
     }
     public mutating func remove(recipeID: UUID) { recipes.removeAll { $0.id == recipeID } }
+    
+    public mutating func add(_ exercise: Exercise) { exercises.append(exercise) }
+    public mutating func update(_ exercise: Exercise) {
+        if let idx = exercises.firstIndex(where: { $0.id == exercise.id }) {
+            exercises[idx] = exercise
+        }
+    }
+    public mutating func remove(exerciseID: UUID) { exercises.removeAll { $0.id == exerciseID } }
+
+    public mutating func add(_ routine: Routine) { routines.append(routine) }
+    public mutating func update(_ routine: Routine) {
+        if let idx = routines.firstIndex(where: { $0.id == routine.id }) {
+            routines[idx] = routine
+        }
+    }
+    public mutating func remove(routineID: UUID) { routines.removeAll { $0.id == routineID } }
 }
 
 public extension Array where Element == CalorieEntry {
