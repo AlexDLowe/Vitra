@@ -112,7 +112,7 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("MyKenko")
                     .font(.headline)
-                Text("Version 1.0")
+                Text("Version 0.1")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 Text("Track your wellness journey with personalized insights and nutrition guidance.")
